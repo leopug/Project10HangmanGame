@@ -26,7 +26,7 @@ class ViewController: UIViewController {
 
     override func loadView() {
         
-        wordToGuess = "abacate"
+        wordToGuess = getARandomWord()
         
         view = UIView()
         view.backgroundColor = .white
@@ -88,8 +88,7 @@ class ViewController: UIViewController {
         let submitAction = UIAlertAction(title: "Submit", style: .default) {
             [weak self, weak ac] _ in
             guard let userGuessResult = ac?.textFields?[0].text else { return }
-            let char = Array(userGuessResult)[0]
-            if (self?.wordToGuess.firstIndex(of: char) != nil) {
+            if (self?.wordToGuess.firstIndex(of: Array(userGuessResult)[0]) != nil) {
                 self?.userGuessResult = userGuessResult
                 self?.updateResponseLabel()
             } else {
@@ -130,6 +129,17 @@ class ViewController: UIViewController {
             }
         }
         responseLabel.text = guessLabelText
+        if guessLabelText.firstIndex(of: "?") == nil {
+            let ac = UIAlertController(title: "Congratulations", message: "You answered correctly the word \(wordToGuess!). A new word is waiting for you now!", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "Ok", style: .cancel))
+            present(ac, animated: true)
+            resetGame()
+        }
+    }
+    
+    func getARandomWord() -> String {
+        return ["car","abacate","latinha","pitbull","sabonete",
+                "vinagre","raining","blood"].randomElement()!
     }
     
     override func viewDidLoad() {
@@ -139,12 +149,14 @@ class ViewController: UIViewController {
     }
 
     func resetGame(){
+        wordToGuess = getARandomWord()
         guessLabelText = ""
         for _ in 0..<wordToGuess!.count {
             guessLabelText+="?"
         }
         responseLabel.text = guessLabelText
         score = 0
+        wrongAnswer = 0
     }
 
 }
